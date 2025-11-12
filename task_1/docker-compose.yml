@@ -1,0 +1,44 @@
+services:
+  # PostgreSQL database
+  db:
+    image: postgres:15-alpine
+    container_name: news_classifier_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-classifier_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-classifier_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-news_classifier}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-classifier_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI application
+  api:
+    build: .
+    container_name: news_classifier_api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-classifier_user}:${POSTGRES_PASSWORD:-classifier_pass}@db:5432/${POSTGRES_DB:-news_classifier}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+      - ./dataset:/app/dataset
+      - qdrant_data:/app/qdrant_data
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
+  qdrant_data:
+

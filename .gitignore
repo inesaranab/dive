@@ -1,0 +1,56 @@
+# Environment variables (IMPORTANT: Never commit API keys!)
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Docker
+.docker/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Qdrant data
+task_1/qdrant_data/
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Don't ignore lock files (needed for reproducible builds)
+!uv.lock
+!poetry.lock
+!package-lock.json
